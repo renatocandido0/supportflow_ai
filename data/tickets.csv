@@ -1,0 +1,13 @@
+title,description,category
+Esqueci minha senha,Não consigo entrar na minha conta porque esqueci minha senha,access
+Código de verificação não recebido,Tentei fazer login mas o código de autenticação não chegou no meu email,access
+Permissão negada,Meu usuário não possui autorização para acessar o painel administrativo,access
+Valor incorreto no boleto,O valor cobrado no meu boleto é maior do que o preço contratado,billing
+Pagamento PIX duplicado,Realizei um pagamento via PIX e o valor foi descontado duas vezes,billing
+Cobrança desconhecida no cartão,Identifiquei uma compra na minha fatura que não reconheço,billing
+Aplicativo fechando sozinho,O programa encerra inesperadamente sempre que tento abrir uma funcionalidade,technical_issue
+Erro ao enviar arquivos,Tento fazer upload de documentos mas o sistema apresenta uma falha,technical_issue
+Página travando constantemente,A interface congela durante a navegação e os botões param de responder,technical_issue
+Solicitação de manual,Gostaria de receber um guia explicando como utilizar as ferramentas disponíveis,other
+Sugestão de nova funcionalidade,Seria interessante adicionar um modo escuro na plataforma,other
+Solicitação de treinamento,Gostaria de agendar uma apresentação para aprender a utilizar melhor o sistema,other

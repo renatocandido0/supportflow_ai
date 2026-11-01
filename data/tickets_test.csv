@@ -1,0 +1,9 @@
+title,description,category
+Conta bloqueada após tentativas,Após várias tentativas o acesso ao meu perfil foi bloqueado,access
+Autenticação não conclui,O aplicativo pede confirmação da identidade e não libera a entrada,access
+Estorno pendente,Solicitei devolução de um valor pago e ainda não recebi o reembolso,billing
+Assinatura renovada indevidamente,Meu plano foi renovado e houve débito sem minha autorização,billing
+Pesquisa não retorna resultados,A busca da plataforma fica carregando e nunca exibe os itens,technical_issue
+Relatório não é gerado,Ao solicitar um relatório o sistema mostra uma mensagem de falha,technical_issue
+Informações sobre atendimento,Quero saber em quais horários a equipe de suporte atende,other
+Proposta de integração,Seria útil conectar a ferramenta ao calendário da empresa,other

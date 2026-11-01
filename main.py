@@ -4,6 +4,7 @@ from typing import Literal
 import sqlite3
 from contextlib import asynccontextmanager
 from database import inicializar_banco
+from ml.classifier import classificar_ticket
 
 
 @asynccontextmanager
@@ -22,6 +23,11 @@ class TicketCreate(BaseModel):
 
 class TicketStatusUpdate(BaseModel):
     status: Literal["open", "in_progress", "resolved"]
+
+
+class TicketClassificationRequest(BaseModel):
+    title: str
+    description: str
 
 
 def abrir_conexao():
@@ -81,6 +87,19 @@ def criar_ticket(novo_ticket: TicketCreate):
         "status": "open"
     }
     return ticket_completo
+
+
+@app.post("/tickets/classify")
+def classificar(novo_ticket: TicketClassificationRequest):
+    try:
+        categoria = classificar_ticket(
+            title=novo_ticket.title,
+            description=novo_ticket.description
+        )
+    except ValueError as erro:
+        raise HTTPException(status_code=422, detail=str(erro))
+
+    return {"predicted_category": categoria}
 
 
 @app.get("/tickets/{id}")

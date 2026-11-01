@@ -1,69 +1,97 @@
 # SupportFlow AI
 
-A RESTful ticket management API built with Python, FastAPI, and SQLite.
+A support ticket management API built with **Python, FastAPI, and SQLite**, with a Machine Learning model for automatic ticket classification.
 
-This project focuses on backend engineering fundamentals, including API development, data persistence, request validation, error handling, and automated testing.
-
-**Current version:** Backend MVP (v1). AI-powered features are planned for future versions and are not yet implemented.
+The project started as a backend REST API and was later extended with a text classifier using **TF-IDF and Logistic Regression**.
 
 ## Features
 
-- Create support tickets with title, description, and priority
-- List all tickets and retrieve individual tickets by ID
-- Update ticket status
-- Delete tickets
-- Persist data using SQLite
-- Validate API requests using Pydantic
-- Handle HTTP 404 and 422 errors
-- Automatically initialize the database on application startup
-- Run automated tests using Pytest
+**Ticket management**
+- Create, list, update, and delete support tickets
+- Store tickets in SQLite
+- Validate requests with Pydantic
+- Handle HTTP errors and invalid requests
+
+**Machine Learning**
+- Classify tickets based on title and description
+- Predict one of four categories: `access`, `billing`, `technical_issue`, or `other`
+- Use TF-IDF for text vectorization and Logistic Regression for classification
+- Save and load the trained model with joblib
+- Run predictions through a dedicated API endpoint
+
+The classifier currently suggests categories without changing the tickets stored in the database.
 
 ## Tech Stack
 
-- **Python** — Backend programming
-- **FastAPI** — REST API framework
+- **Python** — Application logic
+- **FastAPI** — REST API
+- **SQLite** — Data storage
 - **Pydantic** — Request validation
-- **SQLite** — Database
+- **scikit-learn** — Text vectorization and classification
+- **joblib** — Model persistence
 - **Pytest** — Automated testing
-- **Git & GitHub** — Version control
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/tickets` | List all tickets |
-| GET | `/tickets/{id}` | Retrieve a ticket |
+| GET | `/tickets/{id}` | Get a ticket by ID |
 | POST | `/tickets` | Create a ticket |
 | PATCH | `/tickets/{id}` | Update ticket status |
 | DELETE | `/tickets/{id}` | Delete a ticket |
+| POST | `/tickets/classify` | Predict a ticket category |
 
-### Example: Create a ticket
+### Classification Example
 
-**POST `/tickets`**
+**POST `/tickets/classify`**
 
-```json
-{
-  "title": "Login issue",
-  "description": "User cannot access the platform",
-  "priority": "high"
-}
-```
-
-**Example response — HTTP 201**
+Request:
 
 ```json
 {
-  "id": 1,
-  "title": "Login issue",
-  "description": "User cannot access the platform",
-  "priority": "high",
-  "status": "open"
+  "title": "Não consigo acessar minha conta",
+  "description": "Minha senha não funciona"
 }
 ```
 
-Supported priorities: `low`, `medium`, `high`, `urgent`.
+Response:
 
-Supported statuses: `open`, `in_progress`, `resolved`.
+```json
+{
+  "predicted_category": "access"
+}
+```
+
+This endpoint loads the trained classifier and returns a prediction without creating a ticket.
+
+## How the Classifier Works
+
+The classification pipeline is straightforward:
+
+1. Combine the ticket title and description into a single text.
+2. Transform the text into numerical features using a fitted TF-IDF vectorizer.
+3. Pass the resulting vector to a Logistic Regression model.
+4. Return the predicted category through the API.
+
+The vectorizer and classifier are saved together using joblib, so the API can make predictions without retraining the model for every request.
+
+### Initial Evaluation
+
+The first version was trained on **12 labeled synthetic tickets**, with three examples per category.
+
+I tested the model on eight additional synthetic examples that were not part of the training data.
+
+| Metric | Result |
+|---|---|
+| Training samples | 12 |
+| Test samples | 8 |
+| Correct predictions | 6 |
+| Accuracy on this test set | 75% |
+
+**Limitations:** This is an early prototype with a very small dataset. The reported accuracy only describes this initial experiment and should not be interpreted as real-world performance.
+
+The next step for the classifier is to expand the dataset and evaluate it on more representative support requests.
 
 ## Getting Started
 
@@ -92,51 +120,62 @@ Activate it on Windows PowerShell:
 python -m pip install -r requirements.txt
 ```
 
-### 4. Start the API
+### 4. Prepare the classifier
+
+The API uses a trained model stored at:
+
+`models/supportflow_classifier.joblib`
+
+If the model file is not available, generate it from the training dataset:
+
+```bash
+python ml/train_model.py
+```
+
+Only load joblib model files from trusted sources.
+
+### 5. Run the API
 
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-The application automatically creates the SQLite database and tickets table if they do not already exist.
-
-### 5. Explore the API
-
-Open the interactive Swagger documentation:
+Open the Swagger UI to explore and test the endpoints:
 
 http://127.0.0.1:8000/docs
 
-## Running Tests
+## Tests
 
-Install development dependencies:
+Install the development dependencies:
 
 ```bash
 python -m pip install -r requirements-dev.txt
 ```
 
-Run the automated test suite:
+Run the tests:
 
 ```bash
-python -m pytest -v
+python -m pytest -q
 ```
 
-The project currently includes eight passing automated tests covering API operations, error handling, ticket formatting, and database initialization.
+Latest local result:
 
-## Roadmap
+```text
+12 passed
+```
 
-Planned improvements include:
+The test suite covers ticket operations, request validation, error handling, and the classification endpoint. It also includes an integration test that performs a prediction using the saved model.
 
-- AI-assisted ticket classification and prioritization
-- Additional validation and automated test coverage
-- PostgreSQL integration
-- Docker containerization
-- CI/CD pipeline
-- Cloud deployment and monitoring
+These tests verify application behavior; they do not measure the classifier's overall predictive performance.
 
-These features are planned and are not part of the current version.
+## Next Steps
 
-## Project Status
+- Expand the training dataset and improve model evaluation
+- Add AI-assisted ticket prioritization
+- Prepare the application for deployment
 
-**Version 1 — Functional backend MVP**
+## Status
 
-This project is being developed incrementally as part of a software engineering and artificial intelligence learning journey.
+**Version 2 — Backend API with Machine Learning classification**
+
+The backend and classification endpoint are functional. The ML component is still experimental and will be improved as the project evolves.
